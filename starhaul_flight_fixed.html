@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>STARHAUL — Frontier Flight</title>
+<style>
+:root{--bg:#050912;--panel:#0b1422;--panel2:#111f31;--line:#29445e;--cyan:#70dcff;--amber:#ffb957;--green:#74f0ba;--red:#ff7788;--white:#e9f3ff;--muted:#93a9c3}
+*{box-sizing:border-box}body{margin:0;background:#040811;color:var(--white);font:14px system-ui,-apple-system,Segoe UI,sans-serif}button{font:inherit;cursor:pointer;color:var(--white);background:#12243a;border:1px solid #315572;border-radius:5px;padding:9px 11px}button:hover:not(:disabled){background:#1a3c58;border-color:var(--cyan)}button:disabled{opacity:.35;cursor:not-allowed}.primary{background:#075779;border-color:#25a9d7}.warn{background:#573516;border-color:#b77a33}.good{background:#104531;border-color:#2b986b}.danger{background:#421c2b;border-color:#a8475c}
+header{padding:12px 16px;background:#070e19;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:20px;letter-spacing:4px;color:var(--cyan)}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px}.hud{display:flex;gap:7px;flex-wrap:wrap}.chip{background:#0e1a2b;border:1px solid var(--line);padding:7px 10px;border-radius:4px;font-size:12px}.chip b{color:var(--green)}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:12px;padding:12px;max-width:1400px;margin:auto}.left,.right{display:flex;flex-direction:column;gap:12px;min-width:0}.screen{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#07101c}.screen-head{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#0d1928;border-bottom:1px solid var(--line);gap:8px}.screen-head strong{font-size:12px;letter-spacing:1.5px;color:var(--cyan)}.screen-head span{font-size:11px;color:var(--muted)}#cockpit{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#02050c}.cockpit-actions{display:flex;gap:7px;flex-wrap:wrap;padding:10px;background:#0b1422;border-top:1px solid var(--line)}.status{font-size:12px;color:#c7d8ed;padding:10px 12px;min-height:39px;background:#091321;border-top:1px solid #1b3046}.tabs{display:flex;gap:4px;padding:8px;background:#091321;border-bottom:1px solid var(--line);flex-wrap:wrap}.tabs button{padding:7px 10px;font-size:11px}.tabs button.active{border-color:var(--cyan);background:#103047;color:var(--cyan)}.content{padding:12px;min-height:190px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card{border:1px solid #294158;background:#0a1422;padding:10px;border-radius:6px;min-width:0}.card h3{font-size:13px;margin:0 0 5px}.card p{margin:4px 0;color:var(--muted);font-size:12px;line-height:1.4}.card .big{font-size:16px;color:var(--amber);font-weight:750;margin:7px 0}.card button{width:100%;margin-top:8px;font-size:12px}.line{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #20344a;align-items:center}.line:last-child{border-bottom:0}.line small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.line b{font-size:12px}.line .action{display:flex;gap:5px;align-items:center}.line button{font-size:11px;padding:7px}.bar{height:6px;background:#1b2a3b;border-radius:10px;overflow:hidden;margin-top:5px}.bar span{display:block;height:100%;background:var(--green);width:50%}.map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.sys{position:relative;text-align:left;min-height:105px;padding:10px;background:#07101c;border:1px solid #294158;border-radius:6px}.sys.selected{border-color:var(--cyan);background:#0d2335}.sys.current:after{content:'AKTUELL';position:absolute;right:6px;top:6px;font-size:8px;color:var(--green)}.orb{display:block;width:19px;height:19px;border-radius:50%;margin:0 0 9px;background:radial-gradient(circle at 30% 30%,#fff,#68dfff 30%,#2469a8 65%,#102544);box-shadow:0 0 14px #51cfff66}.sys:nth-child(2) .orb{background:radial-gradient(circle at 30% 30%,#fff,#ffb65b 30%,#9c4a21 70%)}.sys:nth-child(3) .orb{background:radial-gradient(circle at 30% 30%,#fff,#c4a0ff 30%,#4d318c 70%)}.sys b{display:block;font-size:12px}.sys small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.message{border:1px solid #2a5066;background:#0a202d;padding:10px;border-radius:5px;color:#c7edff;font-size:12px;line-height:1.5}.message.error{border-color:#8e3d50;background:#2b101b;color:#ffd4db}.message.success{border-color:#286f53;background:#0c261e;color:#c7ffe4}.keyhelp{font-size:11px;color:var(--muted);padding:0 12px 10px}.kbd{border:1px solid #456078;background:#101d2b;padding:1px 5px;border-radius:3px;color:#dcecff}.log{max-height:160px;overflow:auto;font-size:11px;color:var(--muted)}.log div{padding:5px 0;border-bottom:1px solid #1b2a3d}.hidden{display:none!important}.empty{font-size:12px;color:var(--muted);padding:10px 0}
+@media(max-width:850px){.layout{grid-template-columns:1fr;padding:8px}.right{display:contents}.left{display:contents}.flight{order:0}.mapPanel{order:1}.services{order:2}.shipPanel{order:3}.logPanel{order:4}.layout{display:flex;flex-direction:column}.grid2{grid-template-columns:1fr 1fr}}
+@media(max-width:470px){header{padding:10px}.hud{width:100%}.chip{flex:1}.map{gap:5px}.sys{padding:7px;min-height:95px}.content{padding:9px}.grid2{grid-template-columns:1fr}.cockpit-actions button{flex:1}.screen-head{padding:8px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><h1>STARHAUL</h1><small>FRONTIER FLIGHT SIMULATOR · BUILD 0.4</small></div>
+ <div class="hud"><div class="chip">CREDITS <b id="credits">1.000 Cr</b></div><div class="chip">SYSTEM <b id="systemHud">SOLACE</b></div><div class="chip">SHIP <b id="shipHud">Sidewinder</b></div><div class="chip">STATUS <b id="statusHud">DOCKED</b></div></div>
+</header>
+<div class="layout">
+ <div class="left">
+  <section class="screen flight">
+   <div class="screen-head"><strong>FLIGHT DECK / EXTERNAL VIEW</strong><span id="flightLabel">DOCKED AT SOLACE STATION</span></div>
+   <svg id="cockpit" viewBox="0 0 960 540" role="img" aria-label="STARHAUL cockpit view" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;aspect-ratio:16/9;background:#02050c">
+    <defs>
+      <linearGradient id="spaceBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050c19"/><stop offset=".65" stop-color="#0a1a2b"/><stop offset="1" stop-color="#03060b"/></linearGradient>
+      <radialGradient id="planetGrad" cx="30%" cy="30%" r="75%"><stop offset="0" stop-color="#b7efff"/><stop offset=".35" stop-color="#388bb5"/><stop offset="1" stop-color="#071326"/></radialGradient>
+      <linearGradient id="glassGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1c2b" stop-opacity=".1"/><stop offset="1" stop-color="#0b1c2b" stop-opacity=".9"/></linearGradient>
+    </defs>
+    <rect width="960" height="540" fill="url(#spaceBg)"/>
+    <g id="spaceObjects">
+    <g fill="#d8efff">
+      <circle cx="55" cy="85" r="1.5"/><circle cx="122" cy="143" r="1"/><circle cx="188" cy="63" r="1.4"/><circle cx="245" cy="179" r="1"/><circle cx="304" cy="104" r="1.2"/><circle cx="362" cy="45" r="1"/><circle cx="415" cy="152" r="1.5"/><circle cx="480" cy="88" r="1"/><circle cx="537" cy="190" r="1.4"/><circle cx="589" cy="57" r="1"/><circle cx="643" cy="128" r="1.3"/><circle cx="706" cy="74" r="1"/><circle cx="772" cy="162" r="1.4"/><circle cx="839" cy="53" r="1"/><circle cx="908" cy="117" r="1.4"/><circle cx="80" cy="236" r="1"/><circle cx="157" cy="300" r="1.3"/><circle cx="272" cy="252" r="1"/><circle cx="365" cy="319" r="1.2"/><circle cx="501" cy="264" r="1"/><circle cx="619" cy="310" r="1.4"/><circle cx="721" cy="251" r="1"/><circle cx="866" cy="293" r="1.3"/><circle cx="923" cy="225" r="1"/>
+    </g>
+    <circle id="cockpitPlanet" cx="690" cy="184" r="69" fill="url(#planetGrad)"/><ellipse cx="690" cy="184" rx="111" ry="27" fill="none" stroke="#65d9ff" stroke-opacity=".35" stroke-width="2" transform="rotate(-10 690 184)"/>
+    </g>
+    <g id="speedLines" stroke="#a8eaff" stroke-width="1.4" stroke-linecap="round" opacity="0"></g>
+    <g stroke="#65dfff" fill="none" stroke-width="1.5"><circle cx="480" cy="260" r="23"/><path d="M445 260h23m24 0h23M480 225v23m0 24v23"/><circle cx="480" cy="260" r="3"/></g>
+    <g stroke="#315c78" stroke-width="2" fill="none"><path d="M0 432L260 394 374 459H586L700 394 960 432"/><path d="M374 459l38 69m174-69-38 69"/></g>
+    <rect x="240" y="202" width="480" height="58" rx="5" fill="#0b1c2b" fill-opacity=".82"/>
+    <g fill="#b8ecff" font-family="monospace" text-anchor="middle"><text id="cockpitState" x="480" y="226" font-size="20" font-weight="bold">DOCKED</text><text id="cockpitStation" x="480" y="246" font-size="12">SOLACE STATION</text></g>
+    <g fill="#9bdfff" font-family="monospace" font-size="14"><text id="cockpitSystem" x="22" y="28">SYS SOLACE</text><text id="cockpitShields" x="22" y="49">SHIELDS 50</text><text id="cockpitHull" x="22" y="70">HULL 100</text><text id="cockpitThrottle" x="838" y="28">THR 0%</text><text id="cockpitMode" x="740" y="50">FLIGHT ASSIST</text></g>
+    <path d="M20 510H940" stroke="#315c78" stroke-opacity=".6"/><text x="480" y="526" fill="#70dcff" font-family="monospace" font-size="10" text-anchor="middle" letter-spacing="4">STARHAUL / FLIGHT DISPLAY</text>
+  </svg>
+   <div class="cockpit-actions">
+    <button class="primary" id="launchBtn">Launch / Start</button><button id="thrustBtn">▲ Thrust</button><button id="leftBtn">◀ Left</button><button id="rightBtn">Right ▶</button><button id="brakeBtn">■ Brake</button><button id="cruiseBtn">Supercruise</button><button id="jumpBtn">Hyperspace jump</button><button id="dockBtn">Request docking</button>
+   </div>
+   <div class="keyhelp">Flight controls: <span class="kbd">W</span> throttle · <span class="kbd">A</span>/<span class="kbd">D</span> yaw · <span class="kbd">S</span> slow · <span class="kbd">Space</span> brake. On mobile, use the flight buttons.</div>
+   <div class="status" id="flightStatus">Docked. Check the system map, then launch to begin your first route.</div>
+  </section>
+  <section class="screen mapPanel">
+   <div class="screen-head"><strong>GALAXY / SYSTEM NAVIGATION</strong><span>3 nearby systems</span></div>
+   <div class="content"><p style="color:var(--muted);font-size:12px;margin:0 0 10px">Select a destination, launch, then initiate a hyperspace jump. You must be in space to jump.</p><div class="map" id="systemMap"></div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="primary" id="routeBtn">Set route</button><button id="mapLaunchBtn">Launch from station</button></div><div id="routeInfo" class="message" style="margin-top:10px">No route plotted.</div></div>
+  </section>
+ </div>
+ <div class="right">
+  <section class="screen services">
+   <div class="screen-head"><strong>STATION SERVICES</strong><span id="serviceLabel">SOLACE STATION</span></div>
+   <div class="tabs" id="tabs"><button class="active" data-tab="market">Market</button><button data-tab="shipyard">Shipyard</button><button data-tab="outfitting">Outfitting</button><button data-tab="missions">Missions</button></div>
+   <div class="content" id="serviceContent"></div>
+   <div class="status" id="serviceStatus">Services available while docked.</div>
+  </section>
+  <section class="screen shipPanel">
+   <div class="screen-head"><strong>SHIP STATUS</strong><span>MODULES & CARGO</span></div>
+   <div class="content" id="shipContent"></div>
+  </section>
+  <section class="screen logPanel">
+   <div class="screen-head"><strong>COMMS / FLIGHT LOG</strong><span>LOCAL SAVE</span></div>
+   <div class="content"><div class="log" id="log"></div><div style="display:flex;gap:6px;margin-top:9px"><button id="saveBtn">Save commander</button><button id="resetBtn" class="danger">Reset save</button></div></div>
+  </section>
+ </div>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const systems=[
+{id:'solace',name:'Solace',star:'G-class',desc:'Starter system · Safe',dist:0,station:'Solace Station',economy:'Industrial'},
+{id:'cinder',name:'Cinder Reach',star:'K-class',desc:'Mining frontier',dist:8.4,station:'Cinder Exchange',economy:'Extraction'},
+{id:'elysium',name:'Elysium Veil',star:'F-class',desc:'Research hub',dist:13.7,station:'Elysium Orbital',economy:'High-tech'}
+];
+const ships=[
+{id:'sidewinder',name:'Sidewinder',cost:0,role:'Starter craft',hull:100,shield:50,cargo:8,jump:8.5,speed:4,weapon:2,desc:'Small, nimble and cheap to operate.'},
+{id:'hauler',name:'Hauler',cost:4200,role:'Light trader',hull:90,shield:35,cargo:26,jump:12.2,speed:3,weapon:1,desc:'Long jump range and practical cargo space.'},
+{id:'eagle',name:'Eagle',cost:7200,role:'Light fighter',hull:125,shield:75,cargo:4,jump:6.2,speed:8,weapon:8,desc:'Fast combat ship; very little cargo.'},
+{id:'cobra',name:'Cobra Mk III',cost:15000,role:'Multi-role',hull:180,shield:100,cargo:32,jump:10.1,speed:7,weapon:7,desc:'Flexible ship for trade, travel and combat.'}
+];
+const modules=[
+{id:'shield',name:'Reinforced shields',cost:900,desc:'+35 shield capacity',apply:s=>s.shieldMax+=35},
+{id:'cargo',name:'Cargo rack +8',cost:1100,desc:'+8 cargo capacity',apply:s=>s.cargoMax+=8},
+{id:'drive',name:'FSD tuning',cost:1600,desc:'+2.5 ly jump range',apply:s=>s.jumpRange+=2.5},
+{id:'weapon',name:'Pulse laser',cost:1300,desc:'+2 weapon rating',apply:s=>s.weapon+=2}
+];
+const goods=[
+{id:'ore',name:'Metallic ore',base:85,desc:'Raw mining material',prices:{solace:120,cinder:55,elysium:105}},
+{id:'food',name:'Agri supplies',base:70,desc:'Food and basic supplies',prices:{solace:60,cinder:125,elysium:80}},
+{id:'tech',name:'Consumer tech',base:170,desc:'Electronics and components',prices:{solace:145,cinder:230,elysium:95}},
+{id:'medicine',name:'Medicine',base:135,desc:'Medical equipment',prices:{solace:150,cinder:210,elysium:75}}
+];
+const missions=[
+{id:'ore',title:'Mining supply run',desc:'Deliver 3 units of metallic ore to Cinder Reach.',reward:1100,target:'cinder',good:'ore',qty:3},
+{id:'tech',title:'Research materials',desc:'Deliver 2 units of consumer tech to Elysium Veil.',reward:1450,target:'elysium',good:'tech',qty:2},
+{id:'food',title:'Frontier relief',desc:'Deliver 3 units of agri supplies to Cinder Reach.',reward:900,target:'cinder',good:'food',qty:3}
+];
+const fresh=()=>({credits:1000,system:'solace',target:'cinder',ship:'sidewinder',owned:['sidewinder'],cargo:{},hull:100,shield:50,modules:[],state:'docked',cruise:false,route:null,mission:null,missionDone:[],log:[],yaw:0,throttle:0,lastIncome:Date.now()});
+let s;try{s=JSON.parse(localStorage.getItem('starhaul-build04'))||fresh()}catch(e){s=fresh()}
+let actionTimer=null,renderTimer=null,anim=0,keys={},flightSpeed=0,flightYaw=0,lastFrame=0;
+const sys=id=>systems.find(x=>x.id===id)||systems[0];
+const ship=id=>ships.find(x=>x.id===(id||s.ship))||ships[0];
+function stats(){let b=ship();return {hullMax:b.hull,shieldMax:b.shield,cargoMax:b.cargo,jumpRange:b.jump,speed:b.speed,weapon:b.weapon,...(s.modules.includes('shield')?{shieldMax:b.shield+35}:{}),...(s.modules.includes('cargo')?{cargoMax:b.cargo+8}:{}),...(s.modules.includes('drive')?{jumpRange:b.jump+2.5}:{}),...(s.modules.includes('weapon')?{weapon:b.weapon+2}:{})}}
+function totalCargo(){return Object.values(s.cargo).reduce((a,b)=>a+b,0)}
+function cr(n){return Math.floor(n).toLocaleString('en-US')+' Cr'}
+function log(msg){s.log.unshift(new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+'  '+msg);s.log=s.log.slice(0,35);renderLog();save(false)}
+function note(msg,type=''){let el=$('flightStatus');el.textContent=msg;el.className='status '+(type==='error'?'message error':type==='success'?'message success':'');}
+function svc(msg,type=''){let el=$('serviceStatus');el.textContent=msg;el.className='status '+(type==='error'?'message error':type==='success'?'message success':'')}
+function save(show=true){try{localStorage.setItem('starhaul-build04',JSON.stringify(s));if(show)svc('Commander data saved locally.', 'success')}catch(e){if(show)svc('Browser storage unavailable.', 'error')}}
+function systemPrice(g){return g.prices[s.system]||g.base}
+function renderMap(){$('systemMap').innerHTML=systems.map(x=>`<button class="sys ${s.target===x.id?'selected':''} ${s.system===x.id?'current':''}" data-dest="${x.id}"><span class="orb"></span><b>${x.name}</b><small>${x.star} · ${x.economy}</small><small>${x.dist?x.dist+' ly':'Current location'}</small></button>`).join('');$('routeInfo').textContent=s.route?`Route locked: ${sys(s.route).name}. FSD range ${stats().jumpRange.toFixed(1)} ly.`:`Selected destination: ${sys(s.target).name}. Press “Set route” to plot navigation.`;$('routeBtn').disabled=s.state==='jumping'||s.target===s.system;$('mapLaunchBtn').disabled=s.state!=='docked'}
+function renderServices(tab){let out='';
+if(tab==='market'){
+if(s.state!=='docked'){out='<div class="message">Dock at a station to access the commodity market.</div>'}
+else out=goods.map(g=>{let p=systemPrice(g),q=s.cargo[g.id]||0;return `<div class="line"><div><b>${g.name}</b><small>${g.desc} · ${cr(p)}/unit · Cargo ${q}</small></div><div class="action"><button class="good" data-buy="${g.id}" ${totalCargo()>=stats().cargoMax||s.credits<p?'disabled':''}>Buy</button><button data-sell="${g.id}" ${q<1?'disabled':''}>Sell</button></div></div>`}).join('')+`<div class="message" style="margin-top:10px">Cargo: ${totalCargo()} / ${stats().cargoMax} units. Prices depend on local economy.</div>`;
+}else if(tab==='shipyard'){
+out=s.state!=='docked'?'<div class="message">Shipyard access requires docking.</div>':`<div class="grid2">${ships.map(b=>`<div class="card"><h3>${b.name}</h3><p>${b.role} · ${b.desc}</p><div class="big">${b.cost?cr(b.cost):'Starter ship'}</div><p>Hull ${b.hull} · Shields ${b.shield} · Cargo ${b.cargo}</p><p>Jump ${b.jump} ly · Speed ${b.speed}/10 · Weapons ${b.weapon}/10</p><button class="${s.ship===b.id?'good':'primary'}" data-ship="${b.id}" ${s.ship===b.id||(!s.owned.includes(b.id)&&s.credits<b.cost)?'disabled':''}>${s.ship===b.id?'Active ship':s.owned.includes(b.id)?'Switch ship':'Purchase ship'}</button></div>`).join('')}</div>`;
+}else if(tab==='outfitting'){
+out=s.state!=='docked'?'<div class="message">Outfitting requires docking.</div>':`<p style="color:var(--muted);font-size:12px">Install modules on your current ship. Each module can only be bought once in this prototype.</p>${modules.map(m=>`<div class="line"><div><b>${m.name}</b><small>${m.desc}</small></div><div class="action"><b style="color:var(--amber)">${cr(m.cost)}</b><button data-module="${m.id}" ${s.modules.includes(m.id)||s.credits<m.cost?'disabled':''}>${s.modules.includes(m.id)?'Installed':'Install'}</button></div></div>`).join('')}`;
+}else if(tab==='missions'){
+out=missions.map(m=>{let active=s.mission===m.id,done=s.missionDone.includes(m.id);return `<div class="card" style="margin-bottom:8px"><h3>${m.title} ${done?'✓':''}</h3><p>${m.desc}</p><p>Reward: <b style="color:var(--green)">${cr(m.reward)}</b></p><button data-mission="${m.id}" ${active||done||s.state!=='docked'?'disabled':''}>${done?'Completed':active?'Mission accepted':'Accept mission'}</button></div>`}).join('')+'<p style="color:var(--muted);font-size:11px">Complete a delivery by carrying the requested cargo and docking in the destination system.</p>';
+}
+$('serviceContent').innerHTML=out;$('serviceLabel').textContent=s.state==='docked'?sys(s.system).station:'FLIGHT MODE';}
+function renderShip(){let a=stats();$('shipContent').innerHTML=`<div class="line"><div><b>${ship().name}</b><small>${ship().role}</small></div><b>${s.state.toUpperCase()}</b></div><div class="line"><div style="width:100%"><b>Hull integrity</b><div class="bar"><span style="width:${Math.max(0,s.hull/a.hullMax*100)}%;background:${s.hull<a.hullMax*.3?'var(--red)':'var(--green)'}"></span></div></div><b>${Math.max(0,s.hull)}/${a.hullMax}</b></div><div class="line"><div style="width:100%"><b>Shield charge</b><div class="bar"><span style="width:${Math.max(0,s.shield/a.shieldMax*100)}%;background:var(--cyan)"></span></div></div><b>${Math.max(0,s.shield)}/${a.shieldMax}</b></div><div class="line"><div><b>Cargo hold</b><small>${totalCargo()} of ${a.cargoMax} tonnes used</small></div><b>${Math.round(totalCargo()/a.cargoMax*100)}%</b></div><div class="line"><div><b>FSD range</b><small>Current ship configuration</small></div><b>${a.jumpRange.toFixed(1)} ly</b></div><div class="line"><div><b>Modules</b><small>${s.modules.length?s.modules.map(x=>modules.find(m=>m.id===x).name).join(', '):'Stock configuration'}</small></div><button id="repairBtn" ${s.state!=='docked'||s.credits<150||s.hull>=a.hullMax?'disabled':''}>Repair 150 Cr</button></div>`}
+function renderHud(){$('credits').textContent=cr(s.credits);$('systemHud').textContent=sys(s.system).name.toUpperCase();$('shipHud').textContent=ship().name;$('statusHud').textContent=s.state.toUpperCase();$('flightLabel').textContent=s.state==='docked'?'DOCKED AT '+sys(s.system).station:s.state==='jumping'?'HYPERSPACE TRANSIT':s.cruise?'SUPERCRUISE ENGAGED':'FLIGHT MODE';$('launchBtn').textContent=s.state==='docked'?'Launch':'Return to station';$('launchBtn').disabled=s.state==='jumping';$('cruiseBtn').disabled=s.state==='docked'||s.state==='jumping';$('jumpBtn').disabled=s.state==='docked'||s.state==='jumping'||s.target===s.system||!s.route;$('dockBtn').disabled=s.state==='docked'||s.state==='jumping';}
+function renderLog(){$('log').innerHTML=s.log.length?s.log.map(x=>`<div>${x}</div>`).join(''):'<div class="empty">No flight records yet. Commander, your log starts here.</div>'}
+function render(){renderHud();renderMap();renderShip();let active=document.querySelector('#tabs button.active');renderServices(active?active.dataset.tab:'market');renderLog();drawCockpit()}
+function launch(){if(s.state==='docked'){s.state='space';s.cruise=false;s.throttle=0;flightSpeed=0;flightYaw=0;s.yaw=0;note('Launch successful. You are in space. Plot a route and engage the FSD to jump.','success');log('Launched from '+sys(s.system).station+'.');render()}else{note('You cannot return to station automatically yet. Request docking while near a station.');}}
+function cruise(){if(s.state==='docked'){note('Launch first. Supercruise cannot be engaged while docked.','error');return}if(s.state==='jumping')return;s.cruise=!s.cruise;note(s.cruise?'Supercruise engaged. Destination approach speed increased.':'Supercruise disengaged. Normal space flight.','success');log(s.cruise?'Supercruise engaged.':'Supercruise disengaged.');render()}
+function setRoute(){if(s.target===s.system){svc('Select another star system first.','error');return}s.route=s.target;svc('Navigation route plotted to '+sys(s.route).name+'.','success');note('Route plotted to '+sys(s.route).name+'. Launch if docked, then initiate hyperspace jump.','success');log('Navigation route plotted: '+sys(s.route).name+'.');render()}
+function jump(){if(s.state==='docked'){note('Launch before initiating a hyperspace jump.','error');return}if(!s.route||s.route===s.system){note('No valid route. Select a different system and press Set route.','error');return}let a=stats(),dest=sys(s.route);if(dest.dist>a.jumpRange){note('Destination is outside current FSD range. Install an FSD upgrade or buy a ship with more range.','error');return}if(s.state==='jumping')return;s.state='jumping';s.cruise=false;flightSpeed=0;note('FSD charging… hyperspace tunnel opening for '+dest.name+'.');log('FSD charging for jump to '+dest.name+'.');render();clearTimeout(actionTimer);actionTimer=setTimeout(()=>{s.system=dest.id;s.state='space';s.route=null;s.target=dest.id;s.shield=stats().shieldMax;note('Hyperspace exit complete. Arrived in '+dest.name+'. Find the station and request docking.','success');log('Arrived in '+dest.name+'.');render();save(false)},3200)}
+function dock(){if(s.state==='docked'){svc('Already docked. Station services are available.');return}if(s.state==='jumping'){note('Cannot dock during hyperspace transit.','error');return}if(!s.cruise){note('Approach the station: engage Supercruise first, then request docking.');s.cruise=true;render();return}s.state='docked';s.cruise=false;s.throttle=0;flightSpeed=0;flightYaw=0;s.yaw=0;note('Docking complete at '+sys(s.system).station+'. Station services unlocked.','success');log('Docked at '+sys(s.system).station+'.');checkMission();render();save(false)}
+function buy(id){let g=goods.find(x=>x.id===id),p=systemPrice(g);if(s.state!=='docked'){svc('Must be docked to trade.','error');return}if(s.credits<p){svc('Insufficient credits for '+g.name+'.','error');return}if(totalCargo()>=stats().cargoMax){svc('Cargo hold full. Sell or upgrade cargo capacity.','error');return}s.credits-=p;s.cargo[id]=(s.cargo[id]||0)+1;svc('Purchased 1 tonne of '+g.name+' for '+cr(p)+'.','success');log('Bought 1t '+g.name+' for '+cr(p)+'.');render();save(false)}
+function sell(id){let g=goods.find(x=>x.id===id),q=s.cargo[id]||0;if(s.state!=='docked'||q<1)return;let p=systemPrice(g);s.cargo[id]--;if(!s.cargo[id])delete s.cargo[id];s.credits+=p;svc('Sold 1 tonne of '+g.name+' for '+cr(p)+'.','success');log('Sold 1t '+g.name+' for '+cr(p)+'.');checkMission();render();save(false)}
+function buyShip(id){let b=ship(id);if(s.owned.includes(id)){s.ship=id;s.hull=Math.min(b.hull,Math.max(1,s.hull));s.shield=b.shield;svc('Switched to '+b.name+'.','success')}else{if(s.credits<b.cost){svc('Not enough credits.','error');return}s.credits-=b.cost;s.owned.push(id);s.ship=id;s.hull=b.hull;s.shield=b.shield;svc('Purchased '+b.name+'. Your new ship is active.','success');log('Purchased ship '+b.name+'.')}render();save(false)}
+function install(id){let m=modules.find(x=>x.id===id);if(s.modules.includes(id)||s.credits<m.cost)return;s.credits-=m.cost;s.modules.push(id);if(id==='shield')s.shield+=35;svc(m.name+' installed successfully.','success');log('Installed module: '+m.name+'.');render();save(false)}
+function acceptMission(id){if(s.state!=='docked'){svc('Dock to accept a mission.','error');return}if(s.mission){svc('Complete your current mission first.','error');return}if(s.missionDone.includes(id))return;s.mission=id;let m=missions.find(x=>x.id===id);svc('Mission accepted: '+m.title+'.','success');log('Mission accepted: '+m.title+'.');render();save(false)}
+function checkMission(){if(!s.mission)return;let m=missions.find(x=>x.id===s.mission);if(m&&s.system===m.target&&(s.cargo[m.good]||0)>=m.qty&&s.state==='docked'){s.cargo[m.good]-=m.qty;if(!s.cargo[m.good])delete s.cargo[m.good];s.credits+=m.reward;s.missionDone.push(m.id);s.mission=null;svc('Mission complete! Reward received: '+cr(m.reward)+'.','success');log('Mission completed: '+m.title+' (+ '+cr(m.reward)+').')}}
+function drawCockpit(){
+  // SVG cockpit rendering avoids canvas rendering problems in embedded mobile browsers.
+  const set=(id,value)=>{const el=$(id);if(el)el.textContent=value};
+  set('cockpitSystem','SYS '+sys(s.system).name.toUpperCase());
+  set('cockpitShields','SHIELDS '+Math.round(s.shield));
+  set('cockpitHull','HULL '+Math.round(s.hull));
+  set('cockpitThrottle','THR '+Math.round(s.throttle*100)+'%');
+  set('cockpitMode',s.state==='jumping'?'FSD CHARGING':s.cruise?'SUPERCRUISE':'FLIGHT ASSIST');
+  set('cockpitState',s.state==='docked'?'DOCKED':s.state==='jumping'?'HYPERSPACE':s.cruise?'SUPERCRUISE':'IN FLIGHT');
+  set('cockpitStation',s.state==='jumping'?'TRANSIT TO '+sys(s.route||s.system).name.toUpperCase():s.state==='docked'?sys(s.system).station:'TARGET '+sys(s.target).name.toUpperCase());
+  const planet=$('cockpitPlanet');
+  if(planet){planet.setAttribute('fill',s.system==='cinder'?'#c7773c':s.system==='elysium'?'#8f83dc':'url(#planetGrad)')}
+  const objects=$('spaceObjects');
+  const yaw=Math.max(-1.8,Math.min(1.8,flightYaw));
+  if(objects){
+    const sway=Math.sin(anim/420)*flightSpeed*5;
+    objects.setAttribute('transform',`translate(${(-yaw*190+sway).toFixed(1)} ${(Math.cos(anim/600)*flightSpeed*9).toFixed(1)})`);
+  }
+  const streaks=$('speedLines');
+  if(streaks){
+    const level=Math.max(0,Math.min(1,flightSpeed*(s.cruise?1.65:1)));
+    streaks.setAttribute('opacity',(level*0.9).toFixed(2));
+    const lines=[],count=Math.round(level*34);
+    for(let i=0;i<count;i++){
+      const seed=i*97.13;
+      const x=((seed*37+anim*(0.08+level*0.55))%1080)-60;
+      const y=(seed*61)%540;
+      const length=10+level*100+((i*13)%30);
+      lines.push(`<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x-length).toFixed(1)}" y2="${(y+((i%5)-2)*2).toFixed(1)}"/>`);
+    }
+    streaks.innerHTML=lines.join('');
+  }
+}
+// Mobile embedded-browser compatibility: delegated pointer/touch fallback.
+const bindAction=(id,fn)=>{
+  const el=$(id);
+  if(!el) return;
+  let lastTouch=0;
+  el.addEventListener('touchend',e=>{
+    if(el.disabled) return;
+    lastTouch=Date.now();
+    e.preventDefault();
+    try{fn()}catch(err){note('Action error: '+(err&&err.message?err.message:String(err)),'error')}
+  },{passive:false});
+  el.addEventListener('click',e=>{
+    if(Date.now()-lastTouch<700) return;
+    if(el.disabled) return;
+    try{fn()}catch(err){note('Action error: '+(err&&err.message?err.message:String(err)),'error')}
+  });
+};
+bindAction('launchBtn',launch);
+bindAction('mapLaunchBtn',launch);
+bindAction('cruiseBtn',cruise);
+bindAction('jumpBtn',jump);
+bindAction('dockBtn',dock);
+bindAction('routeBtn',setRoute);
+bindAction('thrustBtn',()=>{if(s.state==='docked'){note('Launch first to use thrust.');return} s.throttle=Math.min(1,s.throttle+0.25);note('Thrust increased to '+Math.round(s.throttle*100)+'%.','success');drawCockpit()});
+bindAction('leftBtn',()=>{if(s.state!=='docked'&&s.state!=='jumping'){flightYaw=Math.max(-1.8,flightYaw-0.22);s.yaw=flightYaw;note('Course adjusted left.');drawCockpit()}});
+bindAction('rightBtn',()=>{if(s.state!=='docked'&&s.state!=='jumping'){flightYaw=Math.min(1.8,flightYaw+0.22);s.yaw=flightYaw;note('Course adjusted right.');drawCockpit()}});
+bindAction('brakeBtn',()=>{s.throttle=0;flightSpeed=Math.max(0,flightSpeed-0.35);note('Main thrusters cut. Speed decreasing.','success');drawCockpit()});
+// A visible heartbeat confirms the script reached initialization.
+window.addEventListener('error',e=>{const el=$('flightStatus');if(el)note('JavaScript error: '+(e.message||'unknown error'),'error')});
+$('tabs').addEventListener('click',e=>{let b=e.target.closest('button[data-tab]');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));renderServices(b.dataset.tab)});
+$('systemMap').addEventListener('click',e=>{let b=e.target.closest('button[data-dest]');if(!b)return;s.target=b.dataset.dest;renderMap();$('routeInfo').textContent='Selected '+sys(s.target).name+'. Press Set route to lock navigation.'});
+$('serviceContent').addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.buy)buy(b.dataset.buy);else if(b.dataset.sell)sell(b.dataset.sell);else if(b.dataset.ship)buyShip(b.dataset.ship);else if(b.dataset.module)install(b.dataset.module);else if(b.dataset.mission)acceptMission(b.dataset.mission);else if(b.id==='repairBtn'){let a=stats();if(s.credits>=150&&s.hull<a.hullMax){s.credits-=150;s.hull=a.hullMax;svc('Hull repaired to 100%.','success');log('Hull repairs completed.');render();save(false)}}});
+$('shipContent').addEventListener('click',e=>{if(e.target.id==='repairBtn'){let a=stats();if(s.credits>=150&&s.hull<a.hullMax){s.credits-=150;s.hull=a.hullMax;svc('Hull repaired to 100%.','success');log('Hull repairs completed.');render();save(false)}}});
+$('saveBtn').addEventListener('click',()=>save(true));$('resetBtn').addEventListener('click',()=>{if(confirm('Reset commander save and start a new game?')){s=fresh();save(false);render();note('New commander registered. Welcome to the frontier.','success')}});
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;let k=e.key.toLowerCase();if(['w','a','s','d',' '].includes(k)){e.preventDefault();if(keys[k])return;keys[k]=true;if(s.state==='docked'||s.state==='jumping')return;if(k==='w')s.throttle=Math.min(1,s.throttle+.15);if(k==='s')s.throttle=Math.max(0,s.throttle-.15);if(k==='a'){flightYaw=Math.max(-1.8,flightYaw-.18);s.yaw=flightYaw}if(k==='d'){flightYaw=Math.min(1.8,flightYaw+.18);s.yaw=flightYaw}if(k===' '){s.throttle=0;flightSpeed=Math.max(0,flightSpeed-.3)}drawCockpit()}});
+document.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+if(!s.log)s.log=[];if(!s.owned)s.owned=[s.ship||'sidewinder'];if(!s.cargo)s.cargo={};if(!s.modules)s.modules=[];if(!s.missionDone)s.missionDone=[];if(!s.state)s.state='docked';if(!s.target)s.target='cinder';
+document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.tab==='market'));
+log('Flight computer online. Commander ready.');render();
+// Actual flight loop: throttle builds speed, yaw shifts the starfield/planet, and the HUD updates continuously.
+function flightLoop(timestamp){if(!lastFrame)lastFrame=timestamp;const dt=Math.min(0.05,(timestamp-lastFrame)/1000);lastFrame=timestamp;anim=timestamp;
+  if(s.state==='space'){if(s.throttle>0)flightSpeed=Math.min(1,flightSpeed+s.throttle*dt*0.22);else flightSpeed=Math.max(0,flightSpeed-dt*0.12);if(s.cruise)flightSpeed=Math.min(1,flightSpeed+dt*0.18);}
+  else {flightSpeed=Math.max(0,flightSpeed-dt*0.8)}
+  drawCockpit();requestAnimationFrame(flightLoop)}
+requestAnimationFrame(flightLoop);
+})();
+</script>
+</body>
+</html>
