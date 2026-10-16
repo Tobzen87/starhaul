@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101116">
+<title>REDLINE — Quarter Mile</title>
+<style>
+:root{--bg:#101116;--panel:#1b1d25;--panel2:#242733;--line:#383b49;--text:#f4f5f7;--muted:#a4a8b6;--red:#ff454f;--lime:#d5ff45;--blue:#66d9ff;--gold:#ffc857}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:radial-gradient(ellipse at 50% -15%,#2c2f3b 0,transparent 50%),var(--bg)}
+button,input,select{font:inherit}
+button{border:0;cursor:pointer;color:inherit}
+.app{max-width:980px;margin:auto;padding:12px 12px 28px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 2px 16px}
+.brand{font-weight:1000;letter-spacing:.12em;font-size:1.15rem;font-style:italic}.brand span{color:var(--red)}
+.subbrand{font-size:.64rem;color:var(--muted);letter-spacing:.22em;margin-top:2px}
+.wallet{background:#22242d;border:1px solid var(--line);border-radius:12px;padding:8px 11px;font-weight:900;color:var(--gold);white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.tab{background:#1b1d25;border:1px solid var(--line);border-radius:10px;padding:11px 5px;font-size:.8rem;font-weight:850;color:var(--muted)}
+.tab.active{background:var(--red);border-color:var(--red);color:white}
+.panel{background:linear-gradient(145deg,#20222c,#171920);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:12px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 15px 9px}
+.panel-head h2{font-size:.95rem;margin:0;letter-spacing:.02em}
+.eyebrow{font-size:.65rem;color:var(--muted);letter-spacing:.16em;font-weight:850}
+.car-stage{position:relative;padding:4px 10px 0;min-height:205px;background:linear-gradient(180deg,#222531,#14161d 78%);overflow:hidden}
+.car-stage:before{content:"";position:absolute;left:0;right:0;bottom:40px;height:2px;background:#555a69;box-shadow:0 13px #272a34}
+.car-stage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:42px;background:linear-gradient(180deg,#181a21,#101116)}
+canvas{display:block;width:100%;height:195px;position:relative;z-index:1;touch-action:manipulation}
+.car-caption{position:absolute;left:15px;top:12px;z-index:2;pointer-events:none}
+.car-name{font-size:1.15rem;font-weight:1000;font-style:italic;text-transform:uppercase}
+.car-class{font-size:.68rem;color:var(--muted);letter-spacing:.12em;margin-top:2px}
+.car-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:11px}
+.stat{background:#12141a;border:1px solid #2e303b;border-radius:10px;padding:9px}
+.stat small{display:block;color:var(--muted);font-size:.63rem;text-transform:uppercase;letter-spacing:.1em}
+.stat strong{display:block;font-size:1rem;margin-top:3px}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 11px 12px}
+.btn{border-radius:10px;padding:12px 10px;font-weight:900;font-size:.82rem;background:#30333f;border:1px solid #414553}
+.btn.primary{background:var(--red);border-color:var(--red)}
+.btn.lime{background:var(--lime);color:#15170f;border-color:var(--lime)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.content{padding:13px}
+.car-list{display:flex;gap:8px;overflow:auto;padding:0 13px 13px;scrollbar-width:thin}
+.car-choice{min-width:145px;text-align:left;background:#13151b;border:1px solid var(--line);border-radius:11px;padding:10px}
+.car-choice.selected{border-color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}
+.car-choice strong{display:block;font-size:.82rem}.car-choice small{display:block;color:var(--muted);margin-top:5px}
+.section-title{font-size:.72rem;color:var(--muted);font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin:3px 0 10px}
+.upgrade-list{display:grid;gap:8px}
+.upgrade{background:#14161d;border:1px solid #30333f;border-radius:11px;padding:11px}
+.upgrade-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.upgrade-name{font-weight:900;font-size:.84rem}.upgrade-level{font-size:.7rem;color:var(--lime);font-weight:900}
+.upgrade-desc{font-size:.72rem;color:var(--muted);margin:5px 0 9px}
+.upgrade-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{color:var(--gold);font-size:.8rem;font-weight:900}
+.small-btn{background:#343744;border:1px solid #494d5d;border-radius:8px;padding:8px 10px;font-size:.74rem;font-weight:900}
+.small-btn.buy{background:var(--lime);border-color:var(--lime);color:#17190f}
+.tune-grid{display:grid;gap:15px}
+.tune-control{background:#14161d;border:1px solid #30333f;border-radius:11px;padding:12px}
+.tune-control label{display:flex;justify-content:space-between;gap:8px;font-size:.82rem;font-weight:850;margin-bottom:8px}
+.tune-control output{color:var(--lime);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);min-height:25px}
+.hint{font-size:.73rem;color:var(--muted);line-height:1.45}
+.race-track{position:relative;background:linear-gradient(#292d3a,#161820);height:150px;overflow:hidden;border-radius:12px;border:1px solid #3b3e4b;margin-bottom:12px}
+.track-lights{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 44px,#ffffff08 45px 47px)}
+.track-line{position:absolute;left:0;right:0;bottom:27px;height:2px;background:#aeb2bd}
+.track-finish{position:absolute;right:13%;top:0;bottom:0;width:5px;background:repeating-linear-gradient(0deg,#fff 0 8px,#161820 8px 16px);opacity:.65}
+.race-car{position:absolute;left:4%;bottom:34px;width:43%;height:75px;transition:left .1s linear}
+.race-car canvas{height:100%;width:100%}
+.race-status{display:flex;justify-content:space-between;gap:8px;margin:8px 0 12px;font-size:.78rem}
+.race-status strong{color:var(--lime)}
+.race-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.race-big{padding:17px 8px;border-radius:12px;font-size:.95rem;font-weight:1000;background:var(--red)}
+.race-big.shift{background:var(--lime);color:#15170f}
+.result{background:#111319;border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:12px}
+.result h3{margin:0 0 9px;font-size:1rem}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.result-grid div{background:#20222b;border-radius:8px;padding:9px}.result-grid small{display:block;color:var(--muted);font-size:.62rem}.result-grid strong{display:block;margin-top:3px}
+.hidden{display:none!important}
+.notice{color:var(--muted);font-size:.72rem;line-height:1.45;padding:0 2px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#f2f4f8;color:#15161b;padding:11px 15px;border-radius:12px;font-size:.82rem;font-weight:900;z-index:10;transition:.2s;box-shadow:0 8px 30px #0008;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:#707584;font-size:.66rem;padding:10px}
+@media(min-width:700px){.app{padding:20px}.garage-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}.garage-layout .panel{margin-bottom:0}.car-stage{min-height:240px}canvas{height:225px}.tune-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="brand">REDLINE<span> //</span> CLUB</div><div class="subbrand">QUARTER MILE • STREET DIVISION</div></div>
+  <div class="wallet">¢ <span id="credits">2.500</span></div>
+</header>
+<nav class="tabs" aria-label="Hauptmenü">
+  <button class="tab active" data-tab="garage">Garage</button>
+  <button class="tab" data-tab="tuning">Tuning</button>
+  <button class="tab" data-tab="race">Drag-Race</button>
+</nav>
+
+<section id="garage" class="screen">
+ <div class="garage-layout">
+  <div class="panel">
+   <div class="panel-head"><div><div class="eyebrow">DEIN BUILD</div><h2>Garage</h2></div><span class="eyebrow" id="carIndex">01 / 03</span></div>
+   <div class="car-stage"><div class="car-caption"><div class="car-name" id="carName">KAIRO S4</div><div class="car-class" id="carClass">STREET COUPE • CLASS D</div></div><canvas id="garageCanvas" width="720" height="340" aria-label="Ansicht deines Autos"></canvas></div>
+   <div class="car-stats">
+    <div class="stat"><small>Leistung</small><strong id="powerStat">210 PS</strong></div>
+    <div class="stat"><small>Grip</small><strong id="gripStat">62</strong></div>
+    <div class="stat"><small>0–100</small><strong id="zeroStat">6,8 s</strong></div>
+   </div>
+   <div class="action-row"><button class="btn" id="prevCar">‹ Vorheriges</button><button class="btn" id="nextCar">Nächstes ›</button></div>
+  </div>
+  <div class="panel">
+   <div class="panel-head"><div><div class="eyebrow">DEIN FUHRPARK</div><h2>Wähle deinen Wagen</h2></div></div>
+   <div class="car-list" id="carList"></div>
+   <div class="content"><div class="section-title">Dein Fortschritt</div>
+    <div class="car-stats" style="padding:0">
+     <div class="stat"><small>Rennen</small><strong id="racesStat">0</strong></div>
+     <div class="stat"><small>Siege</small><strong id="winsStat">0</strong></div>
+     <div class="stat"><small>Bestzeit</small><strong id="bestStat">—</strong></div>
+    </div>
+    <p class="hint">Gewinne Drag-Rennen, investiere Credits in Upgrades und feile im Feintuning an deiner Viertelmeilen-Zeit. Dein Fortschritt wird automatisch auf diesem Gerät gespeichert.</p>
+    <button class="btn" id="resetSave" style="width:100%">Spielstand zurücksetzen</button>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="tuning" class="screen hidden">
+ <div class="panel">
+  <div class="panel-head"><div><div class="eyebrow">BUILD YOUR BEAST</div><h2>Performance-Upgrades</h2></div><span class="eyebrow">STUFE 1–5</span></div>
+  <div class="content"><div class="upgrade-list" id="upgradeList"></div></div>
+ </div>
+ <div class="panel">
+  <div class="panel-head"><div><div class="eyebrow">FÜR DIE LETZTEN ZEhntel</div><h2>Feintuning</h2></div><button class="small-btn" id="resetTune">Standard</button></div>
+  <div class="content">
+   <div class="tune-grid">
+    <div class="tune-control"><label for="finalDrive">Übersetzung <output id="finalDriveOut">3,60</output></label><input id="finalDrive" type="range" min="2.8" max="4.8" step=".05" value="3.6"><p class="hint">Kürzer = mehr Punch, länger = mehr Endgeschwindigkeit.</p></div>
+    <div class="tune-control"><label for="boost">Ladedruck <output id="boostOut">1,0 bar</output></label><input id="boost" type="range" min=".5" max="1.8" step=".1" value="1"><p class="hint">Mehr Druck bringt Leistung, kann den Start aber schwieriger machen.</p></div>
+    <div class="tune-control"><label for="nos">NOS-Einsatz <output id="nosOut">65 %</output></label><input id="nos" type="range" min="20" max="100" step="5" value="65"><p class="hint">Bestimmt, wie früh du den Nitro-Knopf im Lauf nutzen solltest.</p></div>
+    <div class="tune-control"><label for="launch">Startdrehzahl <output id="launchOut">4.500 rpm</output></label><input id="launch" type="range" min="2500" max="6500" step="100" value="4500"><p class="hint">Zu niedrig kostet Zeit, zu hoch lässt die Reifen durchdrehen.</p></div>
+   </div>
+   <div class="action-row" style="padding:12px 0 0"><button class="btn lime" id="saveTune">Setup speichern</button><button class="btn" id="showTune">Setup-Auswirkung</button></div>
+   <p class="hint" id="tuneFeedback" aria-live="polite">Dein Setup ist bereit. Teste es auf der Viertelmeile.</p>
+  </div>
+ </div>
+</section>
+
+<section id="race" class="screen hidden">
+ <div class="panel">
+  <div class="panel-head"><div><div class="eyebrow">402 METER • HEAD TO HEAD</div><h2>Viertelmeilen-Drag</h2></div><span class="eyebrow">RUN <span id="runNumber">01</span></span></div>
+  <div class="content">
+   <div class="race-track"><div class="track-lights"></div><div class="track-finish"></div><div class="track-line"></div><div class="race-car" id="raceCar"><canvas id="raceCanvas" width="520" height="170" aria-label="Dein Rennwagen auf der Strecke"></canvas></div></div>
+   <div class="race-status"><span id="raceMessage">Bereit an der Startlinie?</span><strong id="raceDistance">0 / 402 m</strong></div>
+   <div class="car-stats" style="padding:0 0 12px">
+    <div class="stat"><small>Deine Zeit</small><strong id="raceTime">—</strong></div><div class="stat"><small>Geschwindigkeit</small><strong id="raceSpeed">0 km/h</strong></div><div class="stat"><small>Gegnerzeit</small><strong id="opponentTime">—</strong></div>
+   </div>
+   <div class="race-controls"><button class="race-big" id="raceMain">Rennen starten</button><button class="race-big shift" id="shiftBtn" disabled>Schalten ▲</button></div>
+   <div class="race-controls" style="margin-top:8px"><button class="btn" id="nosBtn" disabled>NOS aktivieren</button><button class="btn" id="retryBtn">Neuer Lauf</button></div>
+   <div id="raceResult" class="result hidden" aria-live="polite"></div>
+   <p class="hint" style="margin-top:12px">So geht’s: Starte den Lauf. Beim Countdown nicht zu früh loslassen. Tippe bei hoher Drehzahl auf <b>Schalten</b>; triffst du den grünen Bereich, gibt’s einen sauberen Gangwechsel. NOS gibt dir einen kurzen Schub. Das Timing macht den Unterschied!</p>
+  </div>
+ </div>
+</section>
+<footer>REDLINE CLUB — Fan-made prototype. Alle Marken und Fahrzeuge sind fiktiv.</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+(() => {
+ const SAVE_KEY = "redlineClubSave_v1";
+ const cars = [
+  {id:"kairo",name:"Kairo S4",className:"STREET COUPE • CLASS D",price:0,color:"#e83c4b",power:210,grip:62,zero:6.8,shape:"coupe"},
+  {id:"vanta",name:"Vanta R",className:"TURBO HATCH • CLASS C",price:1800,color:"#52c9f5",power:245,grip:68,zero:6.1,shape:"hatch"},
+  {id:"shogun",name:"Shogun ZX",className:"JDM COUPE • CLASS B",price:4200,color:"#d4ff45",power:290,grip:72,zero:5.4,shape:"coupe"}
+ ];
+ const upgrades = [
+  {id:"engine",name:"Motor & Innereien",desc:"Mehr Grund-Leistung und bessere Beschleunigung.",base:550},
+  {id:"turbo",name:"Turbo-Kit",desc:"Mehr Ladedruck und kräftiger Schub obenrum.",base:650},
+  {id:"ecu",name:"ECU / Mapping",desc:"Präziseres Ansprechverhalten und sauberere Schaltpunkte.",base:450},
+  {id:"trans",name:"Getriebe",desc:"Schnellere Gangwechsel und bessere Kraftübertragung.",base:500},
+  {id:"tires",name:"Drag-Reifen",desc:"Mehr Grip am Start, weniger Wheelspin.",base:400},
+  {id:"weight",name:"Gewichtsreduktion",desc:"Weniger Masse für bessere Beschleunigung.",base:600},
+  {id:"nos",name:"NOS-System",desc:"Mehr Nitro-Kapazität und stärkerer Boost.",base:700}
+ ];
+ const defaultState = () => ({credits:2500,selected:"kairo",owned:["kairo"],races:0,wins:0,best:null,run:1,upgrades:{kairo:{engine:0,turbo:0,ecu:0,trans:0,tires:0,weight:0,nos:0}},tune:{finalDrive:3.6,boost:1,nos:65,launch:4500}});
+ let state = load();
+ let race = {phase:"idle",start:0,raf:0,distance:0,speed:0,time:0,gear:1,rev:0,nosUsed:false,cleanShifts:0,early:false,opponent:0,lastShift:0};
+ const $ = id => document.getElementById(id);
+ const fmt = n => Math.round(n).toLocaleString("de-DE");
+ const dec = (n,d=1) => Number(n).toLocaleString("de-DE",{minimumFractionDigits:d,maximumFractionDigits:d});
+ function load(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return defaultState();const s=JSON.parse(raw);const d=defaultState();return {...d,...s,upgrades:{...d.upgrades,...s.upgrades},tune:{...d.tune,...s.tune}};}catch(e){return defaultState();}}
+ function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){toast("Speichern nicht möglich – Browser-Speicher prüfen.");}}
+ function currentCar(){return cars.find(c=>c.id===state.selected)||cars[0];}
+ function levels(){const c=currentCar();if(!state.upgrades[c.id])state.upgrades[c.id]={engine:0,turbo:0,ecu:0,trans:0,tires:0,weight:0,nos:0};return state.upgrades[c.id];}
+ function stats(){const c=currentCar(),u=levels(),t=state.tune;const power=c.power+u.engine*18+u.turbo*22+u.ecu*8+u.nos*5;const grip=Math.min(95,c.grip+u.tires*5+u.weight*2);const boostFactor=1+(t.boost-1)*.085;const drivePenalty=Math.abs(t.finalDrive-3.65)*.14;const zero=Math.max(3.5,c.zero-(power-c.power)*.008-u.weight*.08-drivePenalty+(1.5-t.boost)*.12);return {power:Math.round(power*boostFactor),grip,zero:Number(zero.toFixed(2)),u};}
+ function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2200);}
+ function setTab(name){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("hidden",s.id!==name));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));if(name==="garage")drawGarage();if(name==="tuning")renderUpgrades();if(name==="race")drawRaceCar();}
+ function drawCar(canvas,car,scale=1,glow=false){if(!canvas)return;const ctx=canvas.getContext("2d");const w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);ctx.save();ctx.scale(scale,scale);const sx=w/scale,sy=h/scale;const y=sy*.66;ctx.fillStyle="#0007";ctx.beginPath();ctx.ellipse(sx*.51,y+sy*.14,sx*.36,sy*.075,0,0,Math.PI*2);ctx.fill();
+  if(glow){ctx.shadowColor=car.color;ctx.shadowBlur=18;}
+  const x=sx*.15,cw=sx*.70;ctx.fillStyle=car.color;ctx.beginPath();ctx.moveTo(x+cw*.06,y);ctx.lineTo(x+cw*.17,y-sy*.14);ctx.lineTo(x+cw*.34,y-sy*.29);ctx.lineTo(x+cw*.62,y-sy*.29);ctx.lineTo(x+cw*.78,y-sy*.13);ctx.lineTo(x+cw*.95,y-sy*.08);ctx.lineTo(x+cw,y);ctx.lineTo(x+cw*.98,y+sy*.045);ctx.lineTo(x+cw*.03,y+sy*.045);ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle="#151922";ctx.beginPath();ctx.moveTo(x+cw*.29,y-sy*.255);ctx.lineTo(x+cw*.38,y-sy*.255);ctx.lineTo(x+cw*.39,y-sy*.15);ctx.lineTo(x+cw*.2,y-sy*.15);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(x+cw*.42,y-sy*.255);ctx.lineTo(x+cw*.60,y-sy*.255);ctx.lineTo(x+cw*.72,y-sy*.15);ctx.lineTo(x+cw*.42,y-sy*.15);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#ffecb1";ctx.fillRect(x+cw*.91,y-sy*.055,cw*.055,sy*.035);ctx.fillStyle="#ff334e";ctx.fillRect(x+cw*.035,y-sy*.04,cw*.06,sy*.04);ctx.fillStyle="#0b0c10";for(const wx of [x+cw*.22,x+cw*.70]){ctx.beginPath();ctx.arc(wx,y+sy*.035,sy*.085,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#87909f";ctx.lineWidth=sy*.018;ctx.stroke();ctx.fillStyle="#252a35";ctx.beginPath();ctx.arc(wx,y+sy*.035,sy*.044,0,Math.PI*2);ctx.fill();ctx.fillStyle="#0b0c10";}
+  ctx.restore();}
+ function drawGarage(){const c=currentCar(),s=stats();$("carName").textContent=c.name;$("carClass").textContent=c.className;$("carIndex").textContent=String(cars.indexOf(c)+1).padStart(2,"0")+" / "+String(cars.length).padStart(2,"0");$("powerStat").textContent=s.power+" PS";$("gripStat").textContent=s.grip;$("zeroStat").textContent=dec(s.zero)+" s";$("credits").textContent=fmt(state.credits);$("racesStat").textContent=state.races;$("winsStat").textContent=state.wins;$("bestStat").textContent=state.best?dec(state.best,2)+" s":"—";drawCar($("garageCanvas"),c,1,true);renderCarList();}
+ function renderCarList(){const list=$("carList");list.innerHTML="";cars.forEach(c=>{const owned=state.owned.includes(c.id),b=document.createElement("button");b.className="car-choice"+(state.selected===c.id?" selected":"");b.innerHTML=`<strong>${c.name}</strong><small>${owned?c.power+" PS • In Besitz":"Preis: ¢ "+fmt(c.price)}</small>`;b.addEventListener("click",()=>{if(!owned){if(state.credits<c.price){toast("Nicht genug Credits.");return;}state.credits-=c.price;state.owned.push(c.id);state.upgrades[c.id]={engine:0,turbo:0,ecu:0,trans:0,tires:0,weight:0,nos:0};toast(c.name+" gekauft!");}state.selected=c.id;save();refresh();});list.appendChild(b);});}
+ function renderUpgrades(){const wrap=$("upgradeList"),u=levels();wrap.innerHTML="";upgrades.forEach(item=>{const level=u[item.id]||0,cost=Math.round(item.base*Math.pow(1.7,level));const div=document.createElement("div");div.className="upgrade";div.innerHTML=`<div class="upgrade-top"><span class="upgrade-name">${item.name}</span><span class="upgrade-level">STUFE ${level}/5</span></div><div class="upgrade-desc">${item.desc}</div><div class="upgrade-bottom"><span class="price">${level>=5?"MAX LEVEL":"¢ "+fmt(cost)}</span><button class="small-btn buy" ${level>=5||state.credits<cost?"disabled":""}>${level>=5?"MAX": "Kaufen"}</button></div>`;div.querySelector("button").addEventListener("click",()=>{if(levels()[item.id]>=5)return;if(state.credits<cost){toast("Nicht genug Credits.");return;}state.credits-=cost;levels()[item.id]++;save();refresh();renderUpgrades();toast(item.name+" auf Stufe "+levels()[item.id]+"!");});wrap.appendChild(div);});}
+ function syncTuneInputs(){for(const key of ["finalDrive","boost","nos","launch"]){$(key).value=state.tune[key];updateTuneLabel(key);}}
+ function updateTuneLabel(key){const v=Number($(key).value);const labels={finalDrive:dec(v,2),boost:dec(v,1)+" bar",nos:Math.round(v)+" %",launch:fmt(v)+" rpm"};$(key+"Out").textContent=labels[key];}
+ function refresh(){drawGarage();renderUpgrades();syncTuneInputs();$("credits").textContent=fmt(state.credits);$("runNumber").textContent=String(state.run).padStart(2,"0");}
+ function drawRaceCar(){drawCar($("raceCanvas"),currentCar(),1,true);}
+ function resetTune(){state.tune={finalDrive:3.6,boost:1,nos:65,launch:4500};syncTuneInputs();save();toast("Standard-Setup geladen.");}
+ function tuneImpact(){const t=state.tune;const drive=Math.abs(t.finalDrive-3.65)*.14;const launchPenalty=Math.abs(t.launch-4700)/1000*.055;const boostRisk=Math.max(0,t.boost-1.3)*.18;const estimate=Math.max(7,stats().zero+3.1-drive-launchPenalty-(t.boost-1)*.25+boostRisk);$("tuneFeedback").textContent="Geschätzte 402-m-Zeit: "+dec(estimate,2)+" s • "+(drive<.08&&launchPenalty<.08?"ausgewogenes Setup":drive>.15?"Übersetzung kostet etwas Beschleunigung":"Setup mit klarer Charakteristik")+". Der echte Lauf hängt auch von deinem Schalt-Timing ab.";}
+ function startRace(){if(race.phase!=="idle"&&race.phase!=="done")return;race={phase:"countdown",start:performance.now(),raf:0,distance:0,speed:0,time:0,gear:1,rev:0,nosUsed:false,cleanShifts:0,early:false,opponent:0,lastShift:0};$("raceResult").classList.add("hidden");$("raceMain").disabled=true;$("shiftBtn").disabled=true;$("nosBtn").disabled=true;$("raceMessage").textContent="Motor hochdrehen…";$("raceTime").textContent="—";$("raceSpeed").textContent="0 km/h";$("opponentTime").textContent="—";$("raceDistance").textContent="0 / 402 m";$("raceCar").style.left="4%";race.raf=requestAnimationFrame(tick);}
+ function tick(now){if(race.phase==="countdown"){const elapsed=(now-race.start)/1000;const remain=3-elapsed;if(remain>0){$("raceMessage").textContent=remain>2?"3":remain>1?"2":"1";race.raf=requestAnimationFrame(tick);return;}race.phase="running";race.start=now;race.lastShift=now;$("raceMessage").textContent="LOS! Vollgas und sauber schalten!";$("shiftBtn").disabled=false;$("nosBtn").disabled=false;}
+  if(race.phase!=="running")return;
+  const dt=Math.min(.05,(now-race.lastShift)/1000);race.lastShift=now;const s=stats(),t=state.tune;let rpm=3300+Math.sin(now/210)*400+race.speed*42;if(race.early)rpm-=700;const launchQuality=Math.max(.65,1-Math.abs(t.launch-4700)/6500);let accel=(s.power/210)*3.5*(s.grip/70)*launchQuality;accel*=1+Math.max(-.12,Math.min(.15,(t.finalDrive-3.6)*.09));if(race.gear>1)accel*=.72+levels().trans*.035;if(race.nosUsed)accel*=1.35;
+  race.speed=Math.min(330,race.speed+accel*dt*12);race.distance+=race.speed/3.6*dt;race.time=(now-race.start)/1000;race.rev=(rpm+race.speed*35)%8200;
+  $("raceDistance").textContent=Math.min(402,Math.floor(race.distance))+" / 402 m";$("raceSpeed").textContent=Math.round(race.speed)+" km/h";$("raceTime").textContent=dec(race.time)+" s";$("raceCar").style.left=(4+Math.min(78,race.distance/402*78))+"%";
+  if(race.distance>=402){finishRace();return;}race.raf=requestAnimationFrame(tick);}
+ function shift(){if(race.phase!=="running")return;const ideal=6100+(levels().ecu*100);const rpm=3300+Math.sin(performance.now()/210)*400+race.speed*42;const quality=1-Math.min(1,Math.abs(rpm-ideal)/3000);if(quality>.72){race.cleanShifts++;race.speed+=3;toast("Perfekter Schaltpunkt!");}else if(quality<.25){race.speed=Math.max(0,race.speed-4);toast("Schaltpunkt verpasst!");}else toast("Gangwechsel.");race.gear=Math.min(5,race.gear+1);$("raceMessage").textContent="Gang "+race.gear+" • "+(quality>.72?"Perfekt!":"Weiter dranbleiben!");if(race.gear>=5)$("shiftBtn").disabled=true;}
+ function useNos(){if(race.phase!=="running"||race.nosUsed)return;race.nosUsed=true;race.speed+=9+levels().nos*1.5;$("nosBtn").disabled=true;$("nosBtn").textContent="NOS verbraucht";$("raceMessage").textContent="NITRO! Drück durch!";toast("NOS gezündet!");}
+ function finishRace(){race.phase="done";cancelAnimationFrame(race.raf);const elapsed=race.time;const s=stats();const opponent=9.9+Math.random()*1.5-(s.power-210)*.003;race.opponent=opponent;const won=elapsed<opponent;const reward=won?550:250;state.races++;if(won)state.wins++;state.credits+=reward;if(!state.best||elapsed<state.best)state.best=elapsed;state.run++;save();$("raceMessage").textContent=won?"SIEG! Die Viertelmeile gehört dir.":"Knapp verloren – schraub am Setup."; $("opponentTime").textContent=dec(opponent)+" s";$("raceMain").disabled=false;$("raceMain").textContent="Nochmal fahren";$("shiftBtn").disabled=true;$("nosBtn").disabled=true;$("raceResult").classList.remove("hidden");$("raceResult").innerHTML=`<h3>${won?"🏁 Sieg auf der Viertelmeile!":"🏁 Lauf beendet"}</h3><div class="result-grid"><div><small>Deine Zeit</small><strong>${dec(elapsed,2)} s</strong></div><div><small>Gegner</small><strong>${dec(opponent,2)} s</strong></div><div><small>Belohnung</small><strong style="color:var(--gold)">+¢ ${reward}</strong></div></div><p class="hint">${race.cleanShifts} saubere Schaltvorgänge • ${race.nosUsed?"NOS eingesetzt":"NOS nicht eingesetzt"}. ${won?"Mit den Credits kannst du deinen Build weiter verbessern.":"Teste eine andere Übersetzung oder mehr Grip."}</p>`;$("credits").textContent=fmt(state.credits);$("runNumber").textContent=String(state.run).padStart(2,"0");drawGarage();}
+ function newRun(){if(race.raf)cancelAnimationFrame(race.raf);race.phase="idle";$("raceMain").disabled=false;$("raceMain").textContent="Rennen starten";$("shiftBtn").disabled=true;$("nosBtn").disabled=true;$("nosBtn").textContent="NOS aktivieren";$("raceCar").style.left="4%";$("raceMessage").textContent="Bereit an der Startlinie?";$("raceDistance").textContent="0 / 402 m";$("raceSpeed").textContent="0 km/h";$("raceTime").textContent="—";$("opponentTime").textContent="—";$("raceResult").classList.add("hidden");drawRaceCar();}
+ function resetGame(){if(!confirm("Wirklich den kompletten Spielstand löschen? Das lässt sich nicht rückgängig machen."))return;localStorage.removeItem(SAVE_KEY);state=defaultState();newRun();refresh();setTab("garage");toast("Neuer Spielstand angelegt.");}
+ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+ $("prevCar").addEventListener("click",()=>cycleCar(-1));$("nextCar").addEventListener("click",()=>cycleCar(1));
+ function cycleCar(delta){const owned=cars.filter(c=>state.owned.includes(c.id));const i=owned.findIndex(c=>c.id===state.selected);state.selected=owned[(i+delta+owned.length)%owned.length].id;save();refresh();}
+ ["finalDrive","boost","nos","launch"].forEach(key=>$(key).addEventListener("input",()=>{state.tune[key]=Number($(key).value);updateTuneLabel(key);save();}));
+ $("resetTune").addEventListener("click",resetTune);$("saveTune").addEventListener("click",()=>{save();tuneImpact();toast("Setup gespeichert.");});$("showTune").addEventListener("click",tuneImpact);
+ $("raceMain").addEventListener("click",startRace);$("shiftBtn").addEventListener("click",shift);$("nosBtn").addEventListener("click",useNos);$("retryBtn").addEventListener("click",newRun);$("resetSave").addEventListener("click",resetGame);
+ window.addEventListener("resize",()=>{drawGarage();drawRaceCar();});
+ // Defensive recovery: a corrupt save or unavailable canvas should not prevent the menu from opening.
+ try{refresh();drawRaceCar();}catch(err){console.error("REDLINE startup error:",err);toast("Startfehler. Seite neu laden oder Spielstand zurücksetzen.");}
+})();
+</script>
+</body>
+</html>
